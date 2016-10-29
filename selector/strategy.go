@@ -38,13 +38,10 @@ func RoundRobin(services []*registry.Service) Next {
 		nodes = append(nodes, service.Nodes...)
 	}
 
-	// Shuffle: No need to start from the first
-	for i := range nodes {
-		j := rand.Intn(i + 1)
-		nodes[i], nodes[j] = nodes[j], nodes[i]
+	i := 0
+	if count := len(nodes); count > 0 {
+		i = rand.Intn(count) // The first random
 	}
-
-	var i int
 	var mtx sync.Mutex
 
 	return func() (*registry.Node, error) {
